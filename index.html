@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Name</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=JetBrains+Mono:wght@400&display=swap');
+
+  :root { --ink:#111; --paper:#fff; }
+  body.dark { --ink:#eee; --paper:#111; }   /* dark mode flips the two colors */
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    line-height: 1.75;
+    padding: 52px 60px;
+    transition: background .3s ease, color .3s ease;   /* smooth light<->dark */
+  }
+
+  /* ---- Header row: heading on the left, toggle dot on the right ---- */
+  .header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  #theme-toggle {
+    flex-shrink: 0;
+    margin-top: 18px;          /* nudge down to align with the big heading */
+    background: none;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    line-height: 0;
+  }
+  @media (hover: hover) and (pointer: fine) { #theme-toggle { cursor: none; } }
+  #theme-dot {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: var(--ink);    /* solid dot in light mode... */
+    transition: background .3s ease, box-shadow .3s ease;
+  }
+  body.dark #theme-dot {
+    background: var(--paper);  /* ...hollow-looking in dark mode */
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+
+  .wrap { max-width: 1180px; }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 54px;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    margin-bottom: 30px;
+  }
+  p { margin-bottom: 22px; }
+
+  a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    position: relative;
+    z-index: 2;                  /* link text rides above the black pill */
+    transition: color .15s ease;
+  }
+  a.lit { color: var(--paper); } /* invert to white while the pill covers it */
+
+  /* ---- Clickable trigger words (the dotted-underline ones) ---- */
+  .trigger {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+    position: relative;
+    z-index: 2;
+    transition: color .15s ease;
+  }
+  .trigger.lit { color: var(--paper); }   /* same white-flip under the pill */
+
+  /* ---- The tree that expands on click ---- */
+  .popup {
+    display: none;
+    margin: 14px 0 4px 0;
+    line-height: 1.7;
+    position: relative;
+    z-index: 2;
+  }
+  .popup.open { display: block; }
+  .popup .l {            /* each tree line sits on its own row */
+    display: block;
+    white-space: pre;    /* preserve the ├─ spacing exactly */
+  }
+  .popup .l2 { padding-left: 0; }   /* nested rows (already indented in text) */
+  .underline { text-decoration: underline; text-underline-offset: 3px; }  /* for non-link emphasis (film titles) */
+
+  /* paragraphs/headings also need to clear the dot so it reads as "behind" */
+  .wrap p, .wrap h1 { position: relative; z-index: 2; }
+
+  /* ---- The cursor: one element that eases position + morphs size ---- */
+  #cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 14px;
+    height: 14px;
+    background: var(--ink);       /* always solid black */
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 1;                   /* sits BEHIND text so words stay readable */
+    opacity: 0;
+    /* size/shape changes animate; position is set every frame in JS */
+    transition: width .2s ease, height .2s ease, border-radius .2s ease, opacity .25s ease;
+  }
+
+  /* Only hide the native cursor when we actually have our custom one */
+  @media (hover: hover) and (pointer: fine) {
+    body, a { cursor: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header-row">
+      <h1>Prateek Saini</h1>
+      <button id="theme-toggle" aria-label="Toggle dark mode"><span id="theme-dot"></span></button>
+    </div>
+    <p>Strategy &amp; Ops, looking for my next thing in media &amp; entertainment 🌴</p>
+    <p>Previously helped build <span class="trigger" data-target="promise">Promise</span>, an AI film studio, <span class="trigger" data-target="aamir">ran ops</span> for <a href="https://www.instagram.com/aamirkhanproductions">Aamir Khan</a>, and <span class="trigger" data-target="bain">advised billion-dollar companies</span>.</p>
+    <div class="popup" id="promise"><span class="l">├─ Strategic Finance &amp; Ops at <a href="https://www.promise.ai/">Promise</a></span><span class="l">├─ Backed by <a href="https://a16z.com">a16z</a>, <a href="https://www.northroadcompany.com/">North Road</a>, and <a href="https://www.google.com">Google</a> (<a href="https://www.hollywoodreporter.com/business/business-news/gen-ai-studio-promise-peter-chernin-a16z-1236065776/">the launch made the news</a>)</span><span class="l">├─ Partnered with the C-suite on financial modeling, slate financing &amp; content strategy</span><span class="l">└─ Joined as employee #15 — we were 50 within a year</span></div>
+    <div class="popup" id="aamir"><span class="l">├─ Chief of staff to Mr. Aamir Khan — his youngest ever</span><span class="l">├─ Helped greenlight his film slate, including <span class="underline">Laapataa Ladies</span> — a Netflix global top 10</span><span class="l">└─ Learned how the big boys' table runs</span></div>
+    <div class="popup" id="bain"><span class="l">├─ Strategy analyst at Areté Advisors, a boutique consulting firm</span><span class="l">└─ Then <a href="https://www.consultancy.in/news/3806/bain-company-hires-team-of-boutique-consultancy-arete-advisors">Bain &amp; Co. hired the whole team</a></span></div>
+    <p>Besides making strategy projects with <a href="https://claude.ai">Claude</a>, I <span class="trigger" data-target="films">make films for fun</span>, play badminton, and read media &amp; economics blogs.</p>
+    <div class="popup" id="films"><span class="l">├─ Founded <a href="https://www.20something.co.in/">20 Something</a>, a production company in Mumbai</span><span class="l">├─ Produced <a href="https://www.youtube.com/watch?v=itllxY1E5Fk">Safar</a>, Saheliyaan, and other coming-of-age stories</span><span class="l">└─ The full credits live on <a href="https://www.imdb.com/name/nm14218969/">IMDb</a></span></div>
+    <p>Once got <a href="https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/junaid-khan-makes-a-rare-appearance-at-dad-aamir-khan-for-laal-singh-chaddha-special-screening/articleshow/93386402.cms">mistaken for a Bollywood star's son</a> by the paparazzi, and play a dangerous amount of Catan. Message me on <a href="https://www.linkedin.com/in/prateeksainiusc">LinkedIn</a> or email <a href="mailto:sainip@marshall.usc.edu">sainip@marshall.usc.edu</a> if you wanna chat!</p>
+  </div>
+
+<script>
+// ---- Click-to-expand trees (works on every device) ----
+// Save each popup's original HTML, then clear it so it starts hidden.
+document.querySelectorAll('.popup').forEach(p => p._html = p.innerHTML);
+
+document.querySelectorAll('.trigger').forEach(t => {
+  t.onclick = () => {
+    const popup = document.getElementById(t.dataset.target);
+    if (!popup) return;
+
+    // toggle closed if already open
+    if (popup.classList.contains('open')) { popup.classList.remove('open'); return; }
+
+    // close any OTHER open tree first (accordion behavior)
+    document.querySelectorAll('.popup.open').forEach(other => {
+      if (other !== popup) {
+        other.classList.remove('open');
+        other.innerHTML = other._html;   // restore full content in case it was mid-typing
+        other.style.minHeight = '';
+      }
+    });
+
+    popup.classList.add('open');
+    const html = popup._html;
+
+    // Measure final height first so the page doesn't jump as it types.
+    popup.innerHTML = html;
+    popup.style.minHeight = popup.offsetHeight + 'px';
+    popup.innerHTML = '';
+
+    // Type it out, skipping over whole HTML tags / &entities; in one go
+    // so we never render a half-written "<a hr".
+    let i = 0;
+    const typeIt = () => {
+      if (!popup.classList.contains('open')) return;   // stopped: another tree was opened
+      if (i >= html.length) { popup.innerHTML = html; popup.style.minHeight = ''; return; }
+      let skip = 1;
+      if (html[i] === '<') { while (i + skip < html.length && html[i + skip - 1] !== '>') skip++; }
+      if (html[i] === '&') { while (i + skip < html.length && html[i + skip - 1] !== ';') skip++; }
+      i += skip;
+      popup.innerHTML = html.slice(0, i);
+      setTimeout(typeIt, 8);   // typing speed — lower = faster
+    };
+    typeIt();
+  };
+});
+
+// ---- Dark mode toggle ----
+const toggle = document.getElementById('theme-toggle');
+let clickCount = 0, clickTimer = null;
+
+toggle.onclick = () => {
+  document.body.classList.toggle('dark');
+
+  // Easter egg: 4 quick clicks -> confetti
+  clickCount++;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => clickCount = 0, 2000);
+  if (clickCount === 4) { confetti(); clickCount = 0; }
+};
+
+// Tiny confetti burst from the toggle button
+function confetti() {
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  canvas.width = innerWidth; canvas.height = innerHeight;
+
+  const rect = toggle.getBoundingClientRect();
+  const cx0 = rect.left + rect.width / 2, cy0 = rect.top + rect.height / 2;
+  const colors = ['#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD','#FF8C42'];
+  const pieces = Array.from({ length: 70 }, () => ({
+    x: cx0, y: cy0,
+    vx: (Math.random() - 0.5) * 15,
+    vy: Math.random() * -16 - 4,
+    w: Math.random() * 6 + 4, h: Math.random() * 4 + 2,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    rot: Math.random() * Math.PI * 2, rv: (Math.random() - 0.5) * 0.3,
+    opacity: 1
+  }));
+
+  let frame = 0;
+  (function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    pieces.forEach(p => {
+      p.x += p.vx; p.vy += 0.4; p.y += p.vy; p.vx *= 0.99; p.rot += p.rv;
+      if (frame > 40) p.opacity = Math.max(0, p.opacity - 0.02);
+      if (p.opacity <= 0) return;
+      alive = true;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive) requestAnimationFrame(animate); else canvas.remove();
+  })();
+}
+
+// Real-mouse only — touch/coarse pointers get normal tapping.
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  const cursor = document.createElement('div');
+  cursor.id = 'cursor';
+  document.body.appendChild(cursor);
+
+  // Three buckets of elements, exactly like the reference site:
+  const INTERACTIVE = 'a, button, .trigger';      // becomes a pill / circle
+  const NON_TEXT    = 'img, svg, canvas, video';  // plain dot
+  const TEXT        = 'p, h1, h2, h3, h4, li, span'; // I-beam caret
+
+  let mx = 0, my = 0, cx = 0, cy = 0, initialized = false;
+  let hoveredEl = null, hoveredRect = null, releaseUntil = 0;
+
+  const setTransform = () => {
+    cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+  };
+
+  window.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (!initialized) { cx = mx; cy = my; cursor.style.opacity = '1'; initialized = true; }
+    // when free (not on a link, past the release window) the dot tracks 1:1
+    if (!hoveredEl && performance.now() >= releaseUntil) { cx = mx; cy = my; setTransform(); }
+  });
+  document.documentElement.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+  document.documentElement.addEventListener('mouseenter', () => { if (initialized) cursor.style.opacity = '1'; });
+
+  const setSize = (w, h, br) => {
+    if (cursor.style.width !== w) cursor.style.width = w;
+    if (cursor.style.height !== h) cursor.style.height = h;
+    if (cursor.style.borderRadius !== br) cursor.style.borderRadius = br;
+  };
+
+  // True hit-test: are we over an actual line of glyphs, not just the box?
+  const isOverText = (el, x, y) => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    for (const r of range.getClientRects())
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return true;
+    return false;
+  };
+
+  const update = () => {
+    if (!initialized) return;
+    const el = document.elementFromPoint(mx, my);
+    if (!el) { hoveredEl = null; setSize('', '', ''); return; }
+
+    // 1) Interactive -> grow to wrap it
+    const interactive = el.closest(INTERACTIVE);
+    if (interactive) {
+      // An element that wraps onto multiple lines has multiple rects (one per
+      // line). Use the rect the pointer is actually over, so the pill wraps
+      // just that line instead of ballooning to cover all of them.
+      const rects = interactive.getClientRects();
+      let r = rects[0];
+      for (const rect of rects) {
+        if (my >= rect.top && my <= rect.bottom) { r = rect; break; }
+      }
+      hoveredRect = r;                       // remember for the position loop
+
+      if (interactive !== hoveredEl) {
+        if (hoveredEl) hoveredEl.classList.remove('lit');
+        hoveredEl = interactive;
+        interactive.classList.add('lit');     // text -> white under the pill
+      }
+      const square = Math.abs(r.width - r.height) < 4;
+      if (square) {                       // round things stay round
+        const s = Math.max(r.width, r.height) + 8;
+        setSize(s+'px', s+'px', (s/2)+'px');
+      } else {                            // links become pills
+        const w = r.width + 8, h = r.height + 4;
+        setSize(w+'px', h+'px', (h/2)+'px');
+      }
+      return;
+    }
+
+    // leaving an interactive el -> start the 220ms smooth release
+    if (hoveredEl) { hoveredEl.classList.remove('lit'); hoveredRect = null; releaseUntil = performance.now() + 220; hoveredEl = null; }
+
+    // 2) Image-like -> just a dot
+    if (el.closest(NON_TEXT)) { setSize('', '', ''); return; }
+
+    // 3) Real text -> caret sized from the font
+    const textEl = el.closest(TEXT);
+    if (textEl && isOverText(textEl, mx, my)) {
+      const fs = parseFloat(getComputedStyle(textEl).fontSize);
+      setSize('2px', (fs * 1.2) + 'px', '1px');
+      return;
+    }
+
+    setSize('', '', '');   // empty space -> dot
+  };
+
+  const tick = () => {
+    update();
+    if (hoveredEl && hoveredRect) {          // glide to the hovered line's center
+      const r = hoveredRect;
+      cx += (r.left + r.width/2  - cx) * 0.25;
+      cy += (r.top  + r.height/2 - cy) * 0.25;
+      setTransform();
+    } else if (performance.now() < releaseUntil) {  // ease back to pointer
+      cx += (mx - cx) * 0.25;
+      cy += (my - cy) * 0.25;
+      setTransform();
+    }
+    requestAnimationFrame(tick);
+  };
+  tick();
+}
+</script>
+</body>
+</html>
