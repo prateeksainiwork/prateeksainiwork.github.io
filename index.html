@@ -118,6 +118,18 @@
   /* paragraphs/headings also need to clear the dot so it reads as "behind" */
   .wrap p, .wrap h1 { position: relative; z-index: 2; }
 
+  /* ---- Phones: stop the tree lines from running off-screen ---- */
+  @media (max-width: 600px) {
+    body { padding: 40px 22px; font-size: 15px; }
+    h1 { font-size: 40px; }
+    .popup .l {
+      white-space: pre-wrap;            /* allow wrapping instead of overflow */
+      overflow-wrap: anywhere;          /* break long unbroken strings if needed */
+      padding-left: 1.7em;              /* indent wrapped lines... */
+      text-indent: -1.7em;              /* ...while pulling the first line back to flush */
+    }
+  }
+
   /* ---- The cursor: one element that eases position + morphs size ---- */
   #cursor {
     position: fixed;
@@ -145,14 +157,14 @@
       <h1>Prateek Saini</h1>
       <button id="theme-toggle" aria-label="Toggle dark mode"><span id="theme-dot"></span></button>
     </div>
-    <p>Strategy &amp; finance in tech &amp; media.</p>
+    <p>Strategy &amp; finance in media &amp; entertainment.</p>
     <p>Previously helped build <span class="trigger" data-target="promise">Promise</span>, an AI film studio, <span class="trigger" data-target="aamir">ran ops</span> for <a href="https://en.wikipedia.org/wiki/Aamir_Khan">Aamir Khan</a>, and <span class="trigger" data-target="bain">advised billion-dollar companies</span>.</p>
     <div class="popup" id="promise"><span class="l">├─ Strategic Finance &amp; Ops at <a href="https://www.promise.ai/">Promise</a></span><span class="l">├─ Backed by <a href="https://a16z.com">a16z</a>, <a href="https://www.northroadcompany.com/">North Road</a>, and <a href="https://www.google.com">Google</a> (<a href="https://www.hollywoodreporter.com/business/business-news/gen-ai-studio-promise-peter-chernin-a16z-1236065776/">the launch made the news</a>)</span><span class="l">├─ Partnered with the C-suite on financial modeling, slate financing &amp; content strategy</span><span class="l">└─ Joined as employee #15 — we were 50 within a year</span></div>
     <div class="popup" id="aamir"><span class="l">├─ Chief of staff to Mr. Aamir Khan — his youngest ever</span><span class="l">├─ Helped greenlight his film slate, including <span class="underline">Laapataa Ladies</span> — a Netflix global top 10</span><span class="l">└─ A seat at the table where the big bets get made</span></div>
     <div class="popup" id="bain"><span class="l">├─ Strategy analyst at Areté Advisors, a boutique consulting firm</span><span class="l">└─ Then <a href="https://www.consultancy.in/news/3806/bain-company-hires-team-of-boutique-consultancy-arete-advisors">Bain &amp; Co. hired the whole team</a></span></div>
-    <p>Lately, with Claude Cowork and <a href="https://harmonic.fun/">Aristotle</a>, I've been building operating models, greenlight engines, and machine-checked decision rules for the tech media business — and <span class="trigger" data-target="models">a few non-obvious reads</span> came out of it.</p>
+    <p>Lately, with Claude Cowork and <a href="https://harmonic.fun/">Aristotle</a>, I've been building operating models, greenlight engines, and machine-checked decision rules for the media business — and <span class="trigger" data-target="models">a few non-obvious reads</span> came out of it.</p>
     <div class="popup" id="models"><span class="l subtrigger" data-sub="m1">├─ <span class="hd">The intercompany mirror</span></span><span class="subgroup" id="m1"><span class="l">│  └─ studio profit that's really sales to its own streamer — gone at consolidation</span></span><span class="l subtrigger" data-sub="m2">├─ <span class="hd">The cash-vs-amortization tell</span></span><span class="subgroup" id="m2"><span class="l">│  └─ content cash outrunning P&amp;L amort is the early signal margins will compress</span></span><span class="l subtrigger" data-sub="m3">├─ <span class="hd">The margin hierarchy</span></span><span class="subgroup" id="m3"><span class="l">│  └─ margin is set by business model, not execution — distribution sits at the floor</span></span><span class="l subtrigger" data-sub="m4">├─ <span class="hd">When bundling backfires</span></span><span class="subgroup" id="m4"><span class="l">│  └─ high subscriber overlap turns a bundle into a discount for people paying twice</span></span><span class="l subtrigger" data-sub="m5">└─ <span class="hd">Perishability as the master variable</span></span><span class="subgroup" id="m5"><span class="l">   └─ one decay rate governs licensing, windowing, and binge-vs-weekly alike</span></span></div>
-    <p>On the side, I <span class="trigger" data-target="films">make films</span>, play badminton, and read tech, media &amp; economics blogs.</p>
+    <p>On the side, I <span class="trigger" data-target="films">make films</span>, play badminton, and read media &amp; economics blogs.</p>
     <div class="popup" id="films"><span class="l">├─ Founded <a href="https://www.20something.co.in/">20 Something</a>, a production company in Mumbai</span><span class="l">├─ Produced <a href="https://www.youtube.com/watch?v=itllxY1E5Fk">Safar</a>, Saheliyaan, and other coming-of-age stories</span><span class="l">└─ The full credits live on <a href="https://www.imdb.com/name/nm14218969/">IMDb</a></span></div>
     <p>Once got <a href="https://timesofindia.indiatimes.com/entertainment/hindi/bollywood/news/junaid-khan-makes-a-rare-appearance-at-dad-aamir-khan-for-laal-singh-chaddha-special-screening/articleshow/93386402.cms">mistaken for a Bollywood star's son</a> by the paparazzi. Reach me on <a href="https://www.linkedin.com/in/prateeksainiusc">LinkedIn</a> or at <a href="mailto:sainip@marshall.usc.edu">sainip@marshall.usc.edu</a>.</p>
   </div>
